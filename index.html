@@ -2,7 +2,7 @@
 <html lang="en-GB">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>MonsterWorks 5.0 — Shared World (Firebase)</title>
+<title>MonsterWorks 5.1 — Shared World (Firebase)</title>
 <meta name="description" content="MonsterWorks 4.1: streamlined motivation-focused encounters, paginated menus, no-scroll layouts and mobile controls; mobile gameplay, legibility and two new districts with persistent saves and the business monster-catching RPG with contracts, career evolutions, customisable trainer, rival battles and curriculum quizzes.">
 <style>
 
@@ -920,7 +920,7 @@ function drawRemoteAvatar(p){
 }
 function draw(){ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cw,ch);ctx.fillStyle='#0d322e';ctx.fillRect(0,0,cw,ch);const targetX=state.player.x*T-cw/2,targetY=state.player.y*T-ch/2;camera.x=clamp(targetX,0,W*T-cw);camera.y=clamp(targetY,0,H*T-ch);ctx.save();ctx.translate(-camera.x,-camera.y);const startX=Math.max(0,Math.floor(camera.x/T)-1),endX=Math.min(W,Math.ceil((camera.x+cw)/T)+1),startY=Math.max(0,Math.floor(camera.y/T)-1),endY=Math.min(H,Math.ceil((camera.y+ch)/T)+1);for(let y=startY;y<endY;y++)for(let x=startX;x<endX;x++)drawTile(x,y,x*T,y*T);
 const sprites=[];for(let y=startY;y<endY;y++)for(let x=startX;x<endX;x++){const t=tile(x,y);if(t==='tree'||t==='rock')sprites.push({y:y+.4,draw:()=>drawObstacle(x,y)})}for(const p of pois){if(p.x*T>camera.x-65&&p.x*T<camera.x+cw+65&&p.y*T>camera.y-70&&p.y*T<camera.y+ch+70)sprites.push({y:p.y,draw:()=>drawPoi(p)})}for(const p of state.pickups){if(p.taken)continue;if(p.x*T>camera.x-30&&p.x*T<camera.x+cw+30&&p.y*T>camera.y-30&&p.y*T<camera.y+ch+30)sprites.push({y:p.y,draw:()=>{const x=p.x*T,y=p.y*T+Math.sin(elapsed*3+p.id)*3;ctx.fillStyle='#fff3b2';ctx.beginPath();ctx.moveTo(x,y-9);ctx.lineTo(x+6,y);ctx.lineTo(x,y+7);ctx.lineTo(x-6,y);ctx.closePath();ctx.fill();ctx.strokeStyle='#faffd977';ctx.stroke()}})}for(const w of state.wild){if(w.x*T>camera.x-40&&w.x*T<camera.x+cw+40&&w.y*T>camera.y-40&&w.y*T<camera.y+ch+40)sprites.push({y:w.y,draw:()=>drawCreature(ctx,w.x*T,w.y*T,species(w.species),1,w.wander)})}for(const remote of (window.MWMultiplayer?.players||[])){if(Number.isFinite(remote.x)&&Number.isFinite(remote.y)){sprites.push({y:remote.y,draw:()=>drawRemoteAvatar(remote)})}}sprites.push({y:state.player.y,draw:drawPlayer});sprites.sort((a,b)=>a.y-b.y);sprites.forEach(s=>s.draw());ctx.restore();drawMini()}
-function drawMini(){const ww=mini.width,hh=mini.height;const sx=ww/W,sy=hh/H;mctx.clearRect(0,0,ww,hh);for(let j=0;j<H;j+=2)for(let i=0;i<W;i+=2){const z=zone(i,j),col=['#669e68','#a18c6d','#568c86','#a87670','#687ec3','#50a9bd'][z];mctx.fillStyle=(i===34||i===35||i===69||i===70||j===23||j===24)&&!walkBridge(i,j)?'#31728e':col;mctx.fillRect(i*sx,j*sy,Math.ceil(2*sx),Math.ceil(2*sy))}for(const p of pois){mctx.fillStyle=p.kind==='hall'?'#fff5be':p.kind==='camp'?'#ecaf7c':'#d6f7bd';mctx.fillRect(p.x*sx-3,p.y*sy-3,6,6)}mctx.fillStyle='#fee4a5';for(const w of state.wild)mctx.fillRect(w.x*sx-1,w.y*sy-1,2,2);mctx.fillStyle='#e5f8ff';mctx.beginPath();mctx.arc(state.player.x*sx,state.player.y*sy,5,0,7);mctx.fill();mctx.strokeStyle='#194459';mctx.lineWidth=2;mctx.stroke()}
+function drawMini(){const ww=mini.width,hh=mini.height;const sx=ww/W,sy=hh/H;mctx.clearRect(0,0,ww,hh);for(let j=0;j<H;j+=2)for(let i=0;i<W;i+=2){const z=zone(i,j),col=['#669e68','#a18c6d','#568c86','#a87670','#687ec3','#50a9bd'][z];mctx.fillStyle=(i===34||i===35||i===69||i===70||j===23||j===24)&&!walkBridge(i,j)?'#31728e':col;mctx.fillRect(i*sx,j*sy,Math.ceil(2*sx),Math.ceil(2*sy))}for(const p of pois){mctx.fillStyle=p.kind==='hall'?'#fff5be':p.kind==='camp'?'#ecaf7c':'#d6f7bd';mctx.fillRect(p.x*sx-3,p.y*sy-3,6,6)}mctx.fillStyle='#fee4a5';for(const w of state.wild)mctx.fillRect(w.x*sx-1,w.y*sy-1,2,2);mctx.fillStyle='#e5f8ff';mctx.beginPath();mctx.arc(state.player.x*sx,state.player.y*sy,5,0,7);mctx.fill();mctx.strokeStyle='#194459';mctx.lineWidth=2;mctx.stroke();if(window.MWDrawPeerMarkers)window.MWDrawPeerMarkers(mctx,sx,sy)}
 function tick(time){const dt=Math.min(.045,(time-lastTime)/1000||0);lastTime=time;elapsed+=dt;if(state){update(dt);if(modalType==='encounter'&&modalContext?.stage==='pulse'){const m=modalContext;m.phase+=dt*(m.dialSpeed||3.3);m.needle=(Math.sin(m.phase)+1)/2;const needle=$('#dialNeedle');if(needle)needle.style.left=(m.needle*99)+'%'}draw()}rafId=requestAnimationFrame(tick)}
 // MonsterWorks 2.0 — contracts, rival crews, morale-weighted statistics and original species art.
 const BUSINESS_TYPES={
@@ -1464,10 +1464,11 @@ function lookSVG(o,large=true){
  const gear=o.gear===1?`<path d="M45 48Q48 28 71 30Q99 26 116 45L116 54Q77 45 45 56Z" fill="${coat}" stroke="${stroke}" stroke-width="4"/><path d="M89 53H126" stroke="#d8edc7" stroke-width="7" stroke-linecap="round"/>`:o.gear===2?`<path d="M45 69Q43 31 80 30Q120 30 116 70" stroke="#d6f5f1" fill="none" stroke-width="7"/><rect x="39" y="65" width="14" height="27" rx="5" fill="${coat}"/><rect x="108" y="65" width="14" height="27" rx="5" fill="${coat}"/>`:o.gear===3?`<rect x="53" y="66" width="24" height="17" rx="5" fill="none" stroke="#213949" stroke-width="4"/><rect x="85" y="66" width="24" height="17" rx="5" fill="none" stroke="#213949" stroke-width="4"/><path d="M77 73H85" stroke="#213949" stroke-width="4"/>`:'';
  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 188" role="img" aria-label="${model==='nonbinary'?'Non-binary':female?'Female':'Male'} trainer character model"><ellipse cx="81" cy="178" rx="46" ry="9" fill="#071b29" opacity=".43"/>${legs}${hairBack}${body}<circle cx="31" cy="148" r="8" fill="${skin}"/><circle cx="130" cy="148" r="8" fill="${skin}"/><rect x="73" y="91" width="16" height="15" rx="5" fill="${skin}"/>${headShape}${hairFront}${eyes}${badge}${gear}</svg>`
 }
-function drawPlayer(){
- const p=state.player,o={...DEFAULT_LOOK,...(state.appearance||{})};const mode=o.gender==='male'?'male':o.gender==='female'?'female':'nonbinary';
- const px=Number.isFinite(playerVisual.x)?playerVisual.x:p.x,py=Number.isFinite(playerVisual.y)?playerVisual.y:p.y;
- const face=playerVisual.facing||p.facing||'down',motion=playerVisual.motion||0,phase=playerVisual.phase||0;
+function drawTrainerCharacter(p, o, visual){
+ o={...DEFAULT_LOOK,...(o||{})};
+ const mode=o.gender==='male'?'male':o.gender==='female'?'female':'nonbinary';
+ const px=Number.isFinite(visual.x)?visual.x:p.x,py=Number.isFinite(visual.y)?visual.y:p.y;
+ const face=visual.facing||p.facing||'down',motion=visual.motion||0,phase=visual.phase||0;
  const stride=Math.sin(phase)*motion,bob=Math.abs(Math.sin(phase))*1.6*motion,side=face==='left'||face==='right',back=face==='up';
  const skin=STYLES.skin[o.skin]||STYLES.skin[0],hair=STYLES.hair[o.hair]||STYLES.hair[0],coat=STYLES.coat[o.coat]||STYLES.coat[0];
  const shoulders=mode==='male'?13:mode==='female'?9:12,headW=mode==='male'?10:mode==='female'?9:10;
@@ -1496,6 +1497,55 @@ function drawPlayer(){
  if(!back){ctx.fillStyle='#1b344b';if(side)ctx.fillRect(5,-20,2,3);else{ctx.fillRect(-5,-20,2.5,3);ctx.fillRect(3,-20,2.5,3)}}
  ctx.restore();ctx.restore()
 }
+// Version 5.1: shared-world sprites. The old world loop already calls
+// window.MWDrawPeers(ctx, T, spr), but v5.0 never defined that function.
+// Reuse the existing local trainer renderer for identical sprite quality.
+function drawPlayer(){
+ drawTrainerCharacter(state.player,{...DEFAULT_LOOK,...(state.appearance||{})},playerVisual);
+}
+const mwRemoteVisuals=new Map();
+window.MWDrawPeers=function(worldCtx,tileSize,sprites){
+ const peers=window.MWMultiplayer?.players||[];
+ const now=performance.now();
+ const active=new Set();
+ for(const remote of peers){
+  if(!remote||typeof remote.uid!=='string'||!Number.isFinite(remote.x)||!Number.isFinite(remote.y))continue;
+  const id=remote.uid;active.add(id);
+  let v=mwRemoteVisuals.get(id);
+  if(!v){v={x:remote.x,y:remote.y,facing:remote.facing||'down',motion:0,phase:0,lastFrame:now};mwRemoteVisuals.set(id,v)}
+  const dt=Math.max(0,Math.min(.1,(now-v.lastFrame)/1000));v.lastFrame=now;
+  const distance=Math.hypot(remote.x-v.x,remote.y-v.y);
+  if(distance>6){v.x=remote.x;v.y=remote.y} // Large jumps are teleports, not walking.
+  else {const k=1-Math.exp(-13*dt);v.x+=(remote.x-v.x)*k;v.y+=(remote.y-v.y)*k}
+  v.facing=['up','down','left','right'].includes(remote.facing)?remote.facing:'down';
+  v.motion=distance>.015?Math.min(1, distance*5):Math.max(0,v.motion-dt*7);
+  v.phase+=v.motion*dt*14;
+  const sx=v.x*tileSize,sy=v.y*tileSize;
+  if(sx<camera.x-55||sx>camera.x+cw+55||sy<camera.y-72||sy>camera.y+ch+45)continue;
+  const name=String(remote.name||'Trainer').slice(0,22);
+  const look={...DEFAULT_LOOK,skin:remote.skin,coat:remote.coat,hair:remote.hair,gear:remote.gear,gender:remote.gender};
+  sprites.push({y:v.y,fn:()=>{
+   drawTrainerCharacter(remote,look,v);
+   worldCtx.save();worldCtx.textAlign='center';worldCtx.textBaseline='middle';
+   worldCtx.font='800 12px Arial, sans-serif';
+   const textWidth=worldCtx.measureText(name).width;
+   const labelWidth=Math.max(44,Math.min(162,textWidth+18));
+   worldCtx.fillStyle='#102a3cec';worldCtx.strokeStyle='#8fe4d0aa';worldCtx.lineWidth=1;
+   worldCtx.beginPath();worldCtx.roundRect(sx-labelWidth/2,sy-58,labelWidth,21,7);worldCtx.fill();worldCtx.stroke();
+   worldCtx.fillStyle='#f3ffed';worldCtx.fillText(name,sx,sy-47);
+   worldCtx.restore();
+  }});
+ }
+ for(const id of mwRemoteVisuals.keys())if(!active.has(id))mwRemoteVisuals.delete(id);
+};
+window.MWDrawPeerMarkers=function(mapCtx,sx,sy){
+ for(const p of window.MWMultiplayer?.players||[]){
+  if(!Number.isFinite(p.x)||!Number.isFinite(p.y))continue;
+  mapCtx.fillStyle='#f4a8fb';mapCtx.strokeStyle='#132d50';mapCtx.lineWidth=1.4;
+  mapCtx.beginPath();mapCtx.arc(p.x*sx,p.y*sy,3.6,0,Math.PI*2);mapCtx.fill();mapCtx.stroke();
+ }
+};
+
 // Additional recruitment propositions keep motivation concepts correct while varying both phrasing and cost.
 Object.assign(PITCHES,{});
 const EXTRA_PITCHES={
@@ -1892,7 +1942,7 @@ boot();
 
 </script>
 <script type="module">
-// MonsterWorks 5.0 — Stage 1 classroom shared world.
+// MonsterWorks 5.1 — Stage 1 classroom shared world.
 // Direct browser Firebase imports; does not require Node.js, npm or a build step.
 // Stage 1 synchronises movement and individual saves, not battles/economic rewards.
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js';
@@ -1944,7 +1994,7 @@ launcher.addEventListener('click',open);
 $('#mw5Close').addEventListener('click',close);
 dialog.addEventListener('click',(e)=>{if(e.target===dialog)close()});
 dialog.addEventListener('keydown',(e)=>{if(e.key==='Escape'){e.preventDefault();close()}e.stopPropagation()});
-function render(){const count=roster.players.length+(room&&slotIndex!==null?1:0);launcher.dataset.status=room&&connection?'online':'offline';launcher.textContent=room?`🌐 ${room} · ${count}/30`:'🌐 Multiplayer';roomLabel.hidden=!room;roomLabel.textContent=room||'';$('#mw5Create').disabled=!configured||!uid||!!room;$('#mw5Join').disabled=!configured||!uid||!!room;$('#mw5Save').disabled=!uid||!saveReady;$('#mw5Load').disabled=!uid||!cloudSavePresent;$('#mw5UseLocal').hidden=!cloudSavePresent||saveReady;$('#mw5Leave').disabled=!room;$('#mw5RoomCode').disabled=!!room;if(room){status.textContent=`${connection?'Connected':'Reconnecting'} · ${count}/30 trainers · ${host?'Room owner':'Participant'}`}}
+function render(){const count=roster.players.length+(room&&slotIndex!==null?1:0);launcher.dataset.status=room&&connection?'online':'offline';launcher.textContent=room?`🌐 ${room} · ${count}/30`:'🌐 Multiplayer';roomLabel.hidden=!room;roomLabel.textContent=room||'';$('#mw5Create').disabled=!configured||!uid||!!room;$('#mw5Join').disabled=!configured||!uid||!!room;$('#mw5Save').disabled=!uid||!saveReady;$('#mw5Load').disabled=!uid||!cloudSavePresent;$('#mw5UseLocal').hidden=!cloudSavePresent||saveReady;$('#mw5Leave').disabled=!room;$('#mw5RoomCode').disabled=!!room;if(room){status.textContent=`${connection?'Connected':'Reconnecting'} · ${count}/30 trainers · ${roster.players.length} other trainer${roster.players.length===1?'':'s'} detected · ${host?'Room owner':'Participant'}`}}
 function code(){const a=new Uint8Array(6);crypto.getRandomValues(a);return Array.from(a,v=>alphabet[v%alphabet.length]).join('')}
 function cleanRoom(v){return String(v||'').trim().toUpperCase().replace(/[^A-HJ-NP-Z2-9]/g,'').slice(0,6)}
 function safePlayer(){const raw=game?.player?.();if(!raw)return null;const a=raw.appearance||{};return {
@@ -1952,7 +2002,10 @@ function safePlayer(){const raw=game?.player?.();if(!raw)return null;const a=raw
  x:Math.max(0,Math.min(105,Number(raw.x)||0)),y:Math.max(0,Math.min(48,Number(raw.y)||0)),
  facing:['up','down','left','right'].includes(raw.facing)?raw.facing:'down',
  skin:Math.max(0,Math.min(2,Math.trunc(Number(a.skin)||0))),
- coat:Math.max(0,Math.min(5,Math.trunc(Number(a.coat)||0))),
+ coat:Math.max(0,Math.min(4,Math.trunc(Number(a.coat)||0))),
+ hair:Math.max(0,Math.min(3,Math.trunc(Number(a.hair)||0))),
+ gear:Math.max(0,Math.min(3,Math.trunc(Number(a.gear)||0))),
+ gender:['male','female','nonbinary'].includes(a.gender)?a.gender:'nonbinary',
  updatedAt:Date.now()
 }}
 async function init(){if(initPromise)return initPromise;initPromise=(async()=>{
@@ -2027,7 +2080,7 @@ async function claimSlot(){if(!room||!db||!uid)return;const me=safePlayer();if(!
  }catch(e){if(i===order[order.length-1])message(`Unable to enter room: ${e.code||e.message}`,true)}}
  if(found>=0){slotIndex=null;message('Could not reconnect to your previous slot.',true)}else message('This classroom is full (30/30).',true)
 }
-async function attachRoom(value){if(rosterStop){rosterStop();rosterStop=null}if(connectStop){connectStop();connectStop=null}room=value;slotIndex=null;remoteSlots.clear();roster.players=[];
+async function attachRoom(value){if(rosterStop){rosterStop();rosterStop=null}if(connectStop){connectStop();connectStop=null}room=value;slotIndex=null;remoteSlots.clear();roster.players=[];lastX=NaN;lastY=NaN;lastFacing='';
  const slotsRef=ref(db,`rooms/${room}/slots`);
  const stopA=onChildAdded(slotsRef,handleSlotChange,e=>message(`Room listener: ${e.code||e.message}`,true));
  const stopC=onChildChanged(slotsRef,handleSlotChange,e=>message(`Room listener: ${e.code||e.message}`,true));
@@ -2041,7 +2094,7 @@ async function createRoom(){await init();if(!db||!uid)return;try{for(let i=0;i<8
  if(result.committed){host=true;$('#mw5RoomCode').value=value;await attachRoom(value);return}
  }message('Could not generate a unique room code. Try again.',true)}catch(e){message(`Room creation failed: ${e.code||e.message}`,true)}}
 async function joinRoom(){await init();if(!db||!uid)return;const value=cleanRoom($('#mw5RoomCode').value);if(value.length!==6){message('Enter a valid six-character classroom code.',true);return}try{const s=await get(ref(db,`rooms/${value}/meta`));if(!s.exists()){message('That classroom code does not exist.',true);return}host=s.val()?.owner===uid;await attachRoom(value)}catch(e){message(`Joining failed: ${e.code||e.message}`,true)}}
-async function leaveRoom(){if(room&&slotIndex!==null){try{await remove(ref(db,`rooms/${room}/slots/${slotIndex}`))}catch{}}
+async function leaveRoom(){if(room&&slotIndex!==null){const oldSlot=ref(db,`rooms/${room}/slots/${slotIndex}`);try{await onDisconnect(oldSlot).cancel()}catch{}try{await remove(oldSlot)}catch{}}
  rosterStop?.();connectStop?.();rosterStop=null;connectStop=null;room='';slotIndex=null;connection=false;host=false;roster.players=[];remoteSlots.clear();$('#mw5RoomCode').disabled=false;message('Left the classroom. Your campaign remains saved.');render()}
 $('#mw5Create').addEventListener('click',createRoom);
 $('#mw5Join').addEventListener('click',joinRoom);
